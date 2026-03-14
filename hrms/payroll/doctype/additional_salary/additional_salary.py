@@ -11,6 +11,35 @@ from hrms.hr.utils import validate_active_employee
 
 
 class AdditionalSalary(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		amended_from: DF.Link | None
+		amount: DF.Currency
+		company: DF.Link
+		currency: DF.Link
+		deduct_full_tax_on_selected_payroll_date: DF.Check
+		department: DF.Link | None
+		disabled: DF.Check
+		employee: DF.Link
+		employee_name: DF.Data | None
+		from_date: DF.Date | None
+		is_recurring: DF.Check
+		naming_series: DF.Literal["HR-ADS-.YY.-.MM.-"]
+		overwrite_salary_structure_amount: DF.Check
+		payroll_date: DF.Date | None
+		ref_docname: DF.DynamicLink | None
+		ref_doctype: DF.Link | None
+		salary_component: DF.Link
+		to_date: DF.Date | None
+		type: DF.Data | None
+	# end: auto-generated types
+
 	def before_validate(self):
 		if self.payroll_date and self.is_recurring:
 			self.payroll_date = None
@@ -110,6 +139,11 @@ class AdditionalSalary(Document):
 		)
 
 		self.validate_from_to_dates("from_date", "to_date")
+
+		if self.is_recurring and not (self.from_date and self.to_date):
+			frappe.throw(_("From and to dates are madatory for recurring type additional salaries."))
+		elif (not self.is_recurring) and (not self.payroll_date):
+			frappe.throw(_("Payroll date is mandatory for non-recurring type additional salaries."))
 
 		if date_of_joining:
 			if self.payroll_date and getdate(self.payroll_date) < getdate(date_of_joining):
