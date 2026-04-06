@@ -22,7 +22,7 @@ services:
       - SHELL=/bin/bash
     working_dir: /home/frappe
     volumes:
-      - /root/hrms/docker:/workspace
+      - ./docker:/workspace
     expose:
       - 8000
       - 9000
